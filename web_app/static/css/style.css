@@ -1,0 +1,285 @@
+html {
+    scroll-behavior: smooth;
+}
+
+/* Базові налаштування */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #333333;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+}
+
+/* Сітка Grid */
+.container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Шапка */
+header {
+    grid-column: 1 / span 2;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: #ffffff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+header h1 {
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.subtitle {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+/* Компоненти карток */
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    border: 1px solid #e5e7eb;
+}
+
+.card h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    color: #1f2937;
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 8px;
+}
+
+/* Прив'язка Grid елементів */
+.service {
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+}
+
+.cls {
+    grid-column: 1 / span 1;
+    grid-row: 3 / span 1;
+}
+
+.rules {
+    grid-column: 2 / span 1;
+    grid-row: 2 / span 2;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Списки та навігаційні кнопки */
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-nav {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    text-decoration: none;
+    color: #4b5563;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.btn-nav:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+    border-color: #d1d5db;
+}
+
+.btn-nav.active {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+    font-weight: 500;
+}
+
+/* Бейджики для кодів у кнопках */
+.badge {
+    background-color: #3b82f6;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-right: 8px;
+    font-weight: bold;
+    min-width: 24px;
+    text-align: center;
+}
+
+.badge-secondary {
+    background-color: #6b7280;
+}
+
+/* Стан пустих контейнерів */
+.empty-state {
+    color: #9ca3af;
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 8px;
+}
+
+/* Секція списку правил */
+.rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rule-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    gap: 15px;
+    transition: border-color 0.2s;
+}
+
+.rule-item:hover {
+    border-color: #cbd5e1;
+}
+
+.selected-rule {
+    border-left: 4px solid #3b82f6;
+    background-color: #f8fafc;
+}
+
+.rule-info {
+    flex: 1;
+}
+
+.rule-code {
+    display: inline-block;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+}
+
+.rule-text {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+/* Кнопка дії (Переглянути текст) */
+.btn-action {
+    display: inline-block;
+    padding: 8px 14px;
+    background-color: #ffffff;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.btn-action:hover {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+/* Деталі версії правила */
+.version-details {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.version-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.version-header h4 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.btn-close {
+    text-decoration: none;
+    color: #94a3b8;
+    font-size: 1.5rem;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.btn-close:hover {
+    color: #64748b;
+}
+
+.version-meta {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+}
+
+.status-tag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.active-status {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.date-tag {
+    color: #64748b;
+    padding: 2px 0;
+}
+
+.version-content h5 {
+    margin: 0 0 6px 0;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.version-content blockquote {
+    margin: 0;
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border-left: 4px solid #cbd5e1;
+    border-radius: 0 4px 4px 0;
+    font-style: italic;
+    color: #334155;
+    font-size: 0.95rem;
+}

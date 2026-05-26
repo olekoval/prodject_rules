@@ -2,275 +2,84 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Навігатор правил</title>
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f0f4f8;
-            min-height: 100vh;
-            padding: 32px 16px;
-            color: #1a2332;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 32px;
-        }
-
-        .wizard {
-            display: flex;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            align-items: flex-start;
-            flex-wrap: wrap;
-        }
-
-        .step {
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-            padding: 24px;
-            flex: 1;
-            min-width: 210px;
-        }
-
-        .step.muted { opacity: 0.42; }
-
-        .step-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .step-number {
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            background: #3b6ef0;
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .step h2 {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #3b4a60;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Radio items as submit buttons */
-        .radio-list { display: flex; flex-direction: column; gap: 8px; }
-
-        .radio-item {
-            display: block;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1.5px solid #e3e9f2;
-            cursor: pointer;
-            font-size: 0.92rem;
-            line-height: 1.4;
-            color: #1a2332;
-            background: #fff;
-            text-decoration: none;
-            transition: background 0.15s, border-color 0.15s;
-        }
-        .radio-item:hover { background: #f0f5ff; border-color: #3b6ef0; }
-        .radio-item.selected { background: #eef2ff; border-color: #3b6ef0; font-weight: 600; }
-
-        .placeholder {
-            color: #9aa5b8;
-            font-size: 0.88rem;
-            font-style: italic;
-            padding: 8px 4px;
-        }
-
-        /* Rules */
-        .step.rules-step { flex: 1.5; }
-
-        .rule-card {
-            border: 1.5px solid #e3e9f2;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            overflow: hidden;
-        }
-        .rule-card:last-child { margin-bottom: 0; }
-        .rule-card.open { border-color: #3b6ef0; }
-
-        .rule-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            gap: 12px;
-        }
-
-        .rule-meta { flex: 1; min-width: 0; }
-
-        .rule-code {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #3b6ef0;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 3px;
-        }
-
-        .rule-name {
-            font-size: 0.9rem;
-            color: #1a2332;
-            line-height: 1.4;
-        }
-
-        .btn-version {
-            flex-shrink: 0;
-            padding: 7px 14px;
-            border-radius: 7px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-version.show {
-            background: #3b6ef0;
-            color: #fff;
-            border: 1.5px solid #3b6ef0;
-        }
-        .btn-version.show:hover { background: #2952cc; border-color: #2952cc; }
-
-        .btn-version.hide {
-            background: #fff;
-            color: #3b6ef0;
-            border: 1.5px solid #3b6ef0;
-        }
-        .btn-version.hide:hover { background: #eef2ff; }
-
-        .version-body {
-            padding: 14px 16px;
-            background: #f6f9ff;
-            border-top: 1.5px solid #d0daf5;
-        }
-
-        .version-meta {
-            font-size: 0.75rem;
-            color: #7a8aa0;
-            margin-bottom: 8px;
-        }
-
-        .version-text {
-            font-size: 0.9rem;
-            color: #1a2332;
-            line-height: 1.65;
-            white-space: pre-wrap;
-        }
-
-        @media (max-width: 750px) {
-            .wizard { flex-direction: column; }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>{% block title %}Правила НСЗУ{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Навігатор правил пакету медичних послуг<br>
- «Профілактика, діагностика, спостереження та лікування в амбулаторних умовах»</h1>
 
-    <div class="wizard">
+<div class="container">
+    <header>
+        <h1>Система перегляду правил</h1>
+        <p class="subtitle">«Профілактика, діагностика, спостереження та лікування в амбулаторних умовах»</p>
+    </header>
 
-        {# ── Крок 1: Сервіс ── #}
-        <div class="step">
-            <div class="step-header">
-                <div class="step-number">1</div>
-                <h2>Сервіс</h2>
-            </div>
-            <div class="radio-list">
-                {% for s in services %}
-                <a href="{{ url_for('index', service=s.cod) }}"
-                   class="radio-item {% if s.cod == service_cod %}selected{% endif %}">
-                    {{ s.name }}
+    <div class="card service">
+        <h3>Сервіси</h3>
+        <div class="nav-list">
+            {% for s in services %}
+                <a href="{{ url_for('index', service=s.cod) }}" 
+                   class="btn-nav {% if s.cod|string == service_cod|string %}active{% endif %}">
+                    <span class="badge">{{ s.cod }}</span> {{ s.name }}
                 </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card cls">
+        <h3>Класи</h3>
+        {% if classes %}
+            <div class="nav-list">
+                {% for c in classes %}
+                    <a href="{{ url_for('index', service=service_cod, class=c.cod) }}"
+                       class="btn-nav {% if c.cod|string == class_cod|string %}active{% endif %}">
+                        <span class="badge badge-secondary">{{ c.cod }}</span> {{ c.name }}
+                    </a>
                 {% endfor %}
             </div>
-        </div>
+        {% else %}
+            <div class="empty-state">Оберіть сервіс, щоб побачити класи</div>
+        {% endif %}
+    </div>
 
-        {# ── Крок 2: Клас ── #}
-        <div class="step {% if not service_cod %}muted{% endif %}">
-            <div class="step-header">
-                <div class="step-number">2</div>
-                <h2>Клас</h2>
-            </div>
-            <div class="radio-list">
-                {% if not service_cod %}
-                    <div class="placeholder">Спочатку оберіть сервіс</div>
-                {% elif not classes %}
-                    <div class="placeholder">Класи не знайдено</div>
-                {% else %}
-                    {% for c in classes %}
-                    <a href="{{ url_for('index', service=service_cod, **{'class': c.cod}) }}"
-                       class="radio-item {% if c.cod == class_cod %}selected{% endif %}">
-                        {{ c.name }}
-                    </a>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </div>
-
-        {# ── Крок 3: Правила ── #}
-        <div class="step rules-step {% if not class_cod %}muted{% endif %}">
-            <div class="step-header">
-                <div class="step-number">3</div>
-                <h2>Правила</h2>
-            </div>
-
-            {% if not class_cod %}
-                <div class="placeholder">Оберіть клас щоб побачити правила</div>
-            {% elif not rules %}
-                <div class="placeholder">Правила не знайдено</div>
-            {% else %}
+    <div class="card rules">
+        <h3>Правила</h3>
+        {% if rules %}
+            <div class="rules-list">
                 {% for r in rules %}
-                {% set is_open = (open_rule_id == r.id) %}
-                <div class="rule-card {% if is_open %}open{% endif %}">
-                    <div class="rule-header">
-                        <div class="rule-meta">
-                            <div class="rule-code">{{ r.rule_code }}</div>
-                            <div class="rule-name">{{ r.rule_text or '—' }}</div>
-                        </div>
-                        {% if is_open %}
-                        <a href="{{ url_for('index', service=service_cod, **{'class': class_cod}) }}"
-                           class="btn-version hide">Сховати текст</a>
-                        {% else %}
-                        <a href="{{ url_for('index', service=service_cod, **{'class': class_cod, 'open_rule': r.id}) }}"
-                           class="btn-version show">Переглянути текст</a>
-                        {% endif %}
+                <div class="rule-item {% if r.id|string == open_rule_id|string %}selected-rule{% endif %}">
+                    <div class="rule-info">
+                        <span class="rule-code">{{ r.rule_code }}</span>
+                        <p class="rule-text">{{ r.rule_text }}</p>
                     </div>
-
-                    {% if is_open %}
-                    <div class="version-body">
-                        {% if version %}
-                        <div class="version-meta">
-                            Статус: {{ version.status }} · Чинне з: {{ version.effective_from }}
-                        </div>
-                        <div class="version-text">{{ version.version_text }}</div>
-                        {% else %}
-                        <div class="placeholder">Текст правила не знайдено</div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
+                    <a href="{{ url_for('index', service=service_cod, class=class_cod, open_rule=r.id) }}#details" class="btn-action">
+                        Переглянути текст
+                    </a>
                 </div>
                 {% endfor %}
-            {% endif %}
-        </div>
+            </div>
+        {% else %}
+            <div class="empty-state">Оберіть сервіс та клас для відображення списку доступних правил.</div>
+        {% endif %}
 
+        {% if version %}
+            <div id="details" class="version-details">
+                <div class="version-header">
+                    <h4>Деталі активного правила</h4>
+                    <a href="{{ url_for('index', service=service_cod, class=class_cod) }}" class="btn-close" title="Закрити">&times;</a>
+                </div>
+                <div class="version-meta">
+                    <span class="status-tag active-status">Статус: {{ version.status }}</span>
+                    <span class="date-tag">Діє з: {{ version.effective_from }}</span>
+                </div>
+                <div class="version-content">
+                    <h5>Текст версії:</h5>
+                    <blockquote>{{ version.version_text }}</blockquote>
+                </div>
+            </div>
+        {% endif %}
     </div>
+</div>
+   
 </body>
 </html>
