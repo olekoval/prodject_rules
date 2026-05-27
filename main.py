@@ -1,6 +1,6 @@
 import secrets
 from pathlib import Path
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -16,6 +16,7 @@ data_path = BASE_DIR / "data" / "database.xlsx"
 df_dicts = pd.read_excel(data_path, sheet_name="dicts")
 df_rules = pd.read_excel(data_path, sheet_name="rules")
 df_versions = pd.read_excel(data_path, sheet_name="rule_versions")
+df_documents = pd.read_excel(data_path, sheet_name="documents")
 
 dff = (df_rules
        .merge(df_dicts, left_on='rule_service', right_on='cod')
@@ -45,36 +46,75 @@ def get_rules(service_cod, class_cod):
             .to_dict('records'))
 
 
-def get_version(rule_id):
-    rows = df_versions[(df_versions['rule_id'] == rule_id) & (df_versions['status'] == 'Активне')]
+def get_rule_details(rule_id):
+    """
+    Повертає активну версію правила та повну хронологію змін
+    з описом документів-підстав для кожної версії.
+    """
+    rows = df_versions[df_versions['rule_id'] == rule_id].copy()
     if rows.empty:
-        return None
-    row = rows.sort_values('effective_from', ascending=False).iloc[0]
-    return {
-        'version_text': row['version_text'],
-        'status': row['status'],
-        'effective_from': str(row['effective_from'])[:10],
-    }
+        return None, []
+
+    # Об'єднуємо версії з документами
+    merged = rows.merge(df_documents, left_on='document_id', right_on='id', how='left')
+    merged = merged.sort_values('effective_from', ascending=False)
+
+    active_version = None
+    history = []
+
+    for _, row in merged.iterrows():
+        # Формуємо інформацію про документ-підставу
+        doc_number = row.get('doc_number')
+        doc_date = row.get('doc_date')
+        doc_type = row.get('doc_type', '')
+        doc_title = row.get('title', '')
+        file_path = row.get('file_path')
+
+        doc_date_str = str(doc_date)[:10] if pd.notna(doc_date) else ''
+        doc_number_str = str(int(doc_number)) if pd.notna(doc_number) else ''
+        has_file = pd.notna(file_path) and str(file_path).strip() not in ('', 'nan')
+
+        document = {
+            'doc_type': doc_type if pd.notna(doc_type) else '',
+            'doc_number': doc_number_str,
+            'doc_date': doc_date_str,
+            'title': doc_title if pd.notna(doc_title) else '',
+            'file_path': str(file_path) if has_file else None,
+            'has_file': has_file,
+        }
+
+        change_desc = row.get('change_description')
+        entry = {
+            'status': row['status'],
+            'effective_from': str(row['effective_from'])[:10],
+            'effective_to': str(row['effective_to'])[:10] if pd.notna(row.get('effective_to')) else None,
+            'version_text': row['version_text'],
+            'change_description': str(change_desc) if pd.notna(change_desc) else None,
+            'document': document,
+            'is_active': row['status'] == 'Активне',
+        }
+        history.append(entry)
+
+        if active_version is None and row['status'] == 'Активне':
+            active_version = entry
+
+    return active_version, history
 
 
 @app.route('/', methods=['GET'])
 def index():
-    # Отримуємо параметри фільтрації та відкриття правила прямо з URL (Query string)
     service_cod = request.args.get('service', '')
     class_cod = request.args.get('class', '')
     open_rule_id = request.args.get('open_rule')
 
-    # Каскадна вибірка даних: класи завантажуються лише якщо обрано сервіс,
-    # а правила — якщо обрано і сервіс, і клас.
     classes = get_classes(service_cod) if service_cod else []
     rules = get_rules(service_cod, class_cod) if service_cod and class_cod else []
 
-    # Якщо користувач клікнув "Переглянути текст", шукаємо версію цього правила
     version = None
+    history = []
     if open_rule_id:
-        version = get_version(open_rule_id)
+        version, history = get_rule_details(open_rule_id)
 
-    # Рендеримо сторінку, передаючи туди всі відфільтровані дані
     return render_template(
         'select_service.html',
         services=services,
@@ -84,6 +124,7 @@ def index():
         rules=rules,
         open_rule_id=open_rule_id,
         version=version,
+        history=history,
     )
 
 

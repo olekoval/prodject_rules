@@ -63,23 +63,130 @@
         {% endif %}
 
         {% if version %}
-            <div id="details" class="version-details">
-                <div class="version-header">
-                    <h4>Деталі активного правила</h4>
-                    <a href="{{ url_for('index', service=service_cod, class=class_cod) }}" class="btn-close" title="Закрити">&times;</a>
-                </div>
-                <div class="version-meta">
-                    <span class="status-tag active-status">Статус: {{ version.status }}</span>
-                    <span class="date-tag">Діє з: {{ version.effective_from }}</span>
-                </div>
-                <div class="version-content">
-                    <h5>Текст версії:</h5>
-                    <blockquote>{{ version.version_text }}</blockquote>
-                </div>
+        <div id="details" class="version-details">
+
+            {# ── Шапка панелі ── #}
+            <div class="version-header">
+                <h4>Деталі активного правила</h4>
+                <a href="{{ url_for('index', service=service_cod, class=class_cod) }}" class="btn-close" title="Закрити">&times;</a>
             </div>
+
+            {# ── Поточна (активна) версія ── #}
+            <div class="version-meta">
+                <span class="status-tag active-status">Статус: {{ version.status }}</span>
+                <span class="date-tag">Діє з: {{ version.effective_from }}</span>
+            </div>
+            <div class="version-content">
+                <h5>Текст чинної версії:</h5>
+                <blockquote>{{ version.version_text }}</blockquote>
+            </div>
+
+            {# ── Підстава для активної версії ── #}
+            {% if version.document %}
+            <div class="doc-basis">
+                <span class="doc-basis-label">Підстава:</span>
+                {% set d = version.document %}
+                <span class="doc-ref">
+                    {{ d.doc_type }}{% if d.doc_number %} № {{ d.doc_number }}{% endif %}{% if d.doc_date %} від {{ d.doc_date }}{% endif %}
+                    {% if d.title %} — {{ d.title }}{% endif %}
+                </span>
+                {% if d.has_file %}
+                <a href="{{ url_for('static', filename=d.file_path) }}" target="_blank" class="btn-pdf">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    PDF
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {# ── Хронологія змін ── #}
+            {% if history|length > 1 %}
+            <div class="history-section">
+                <h5 class="history-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    Хронологія змін ({{ history|length }})
+                </h5>
+
+                <div class="timeline">
+                    {% for entry in history %}
+                    <div class="timeline-item {% if entry.is_active %}timeline-active{% else %}timeline-past{% endif %}">
+                        
+                        <div class="timeline-marker">
+                            <div class="timeline-dot"></div>
+                            {% if not loop.last %}<div class="timeline-line"></div>{% endif %}
+                        </div>
+
+                        <div class="timeline-body">
+                            <div class="timeline-head">
+                                <span class="timeline-date">{{ entry.effective_from }}</span>
+                                {% if entry.is_active %}
+                                    <span class="tl-badge tl-active">Активне</span>
+                                {% else %}
+                                    <span class="tl-badge tl-inactive">
+                                        {{ entry.status }}{% if entry.effective_to %} до {{ entry.effective_to }}{% endif %}
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            {# Опис змін, якщо є #}
+                            {% if entry.change_description %}
+                            <p class="timeline-change">{{ entry.change_description }}</p>
+                            {% endif %}
+
+                            {# Текст версії (згорнутий для старих) #}
+                            {% if not entry.is_active %}
+                            <details class="timeline-text-details">
+                                <summary>Показати текст версії</summary>
+                                <blockquote class="timeline-blockquote">{{ entry.version_text }}</blockquote>
+                            </details>
+                            {% endif %}
+
+                            {# Документ-підстава #}
+                            {% if entry.document and (entry.document.doc_number or entry.document.title) %}
+                            <div class="timeline-doc">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <span class="timeline-doc-text">
+                                    {{ entry.document.doc_type }}{% if entry.document.doc_number %} № {{ entry.document.doc_number }}{% endif %}{% if entry.document.doc_date %} від {{ entry.document.doc_date }}{% endif %}
+                                    {% if entry.document.title %}<span class="timeline-doc-title"> — {{ entry.document.title }}</span>{% endif %}
+                                </span>
+                                {% if entry.document.has_file %}
+                                <a href="{{ url_for('static', filename=entry.document.file_path) }}" target="_blank" class="btn-pdf btn-pdf-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    PDF
+                                </a>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                        </div>{# /.timeline-body #}
+                    </div>{# /.timeline-item #}
+                    {% endfor %}
+                </div>{# /.timeline #}
+            </div>{# /.history-section #}
+            {% endif %}
+
+        </div>{# /#details #}
         {% endif %}
-    </div>
-</div>
-   
+    </div>{# /.rules #}
+</div>{# /.container #}
+
 </body>
 </html>
