@@ -502,3 +502,122 @@ header h1 {
 .timeline-doc-title {
     color: #64748b;
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Стилі для сторінки пошуку та спільних елементів навігації між сторінками
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Панель з посиланням на пошук / назад ── */
+.search-link-bar {
+    grid-column: 1 / span 2;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-search-page {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background-color: #ffffff;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-search-page:hover {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+/* ── Grid для сторінки пошуку (одна колонка замість двох) ── */
+.container-search {
+    grid-template-columns: 1fr;
+}
+
+.container-search header,
+.container-search .search-link-bar {
+    grid-column: 1;
+}
+
+/* ── Форма пошуку ── */
+.search-form-card {
+    /* без grid-column — займає всю ширину у container-search */
+}
+
+.search-row {
+    display: flex;
+    gap: 10px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    color: #1f2937;
+    background: #f9fafb;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    border-color: #3b82f6;
+    background: #ffffff;
+}
+
+.btn-search {
+    padding: 10px 22px;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-search:hover {
+    background-color: #1d4ed8;
+}
+
+.search-hint {
+    margin: 8px 0 0 0;
+    font-size: 0.83rem;
+    color: #9ca3af;
+}
+
+.error-hint {
+    color: #dc2626;
+}
+
+/* ── Заголовок результатів ── */
+.search-results-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.results-count {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* ── Breadcrumb сервіс/клас у результатах пошуку ── */
+.rule-breadcrumb {
+    display: block;
+    font-size: 0.78rem;
+    color: #9ca3af;
+    margin-bottom: 4px;
+}

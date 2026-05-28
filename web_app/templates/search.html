@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пошук за кодом — Правила НСЗУ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container container-search">
+
+    <header>
+        <h1>Пошук за кодом</h1>
+        <p class="subtitle">Введіть код спостереження або інтервенції (мінімум 4 символи)</p>
+    </header>
+
+    {# ── Посилання назад на головну ── #}
+    <div class="search-link-bar">
+        <a href="{{ url_for('index') }}" class="btn-search-page">
+            ← Повернутись до навігації
+        </a>
+    </div>
+
+    {# ── Форма пошуку (GET, без JS) ── #}
+    <div class="card search-form-card">
+        <form method="get" action="{{ url_for('search') }}">
+            <div class="search-row">
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ query }}"
+                    placeholder="Наприклад: B34021 або 10331-7"
+                    minlength="4"
+                    class="search-input"
+                    autofocus
+                >
+                <button type="submit" class="btn-search">Знайти</button>
+            </div>
+            {% if query and query|length < 4 %}
+                <p class="search-hint error-hint">Введіть не менше 4 символів</p>
+            {% else %}
+                <p class="search-hint">Пошук виконується по текстах усіх версій правил (точний збіг)</p>
+            {% endif %}
+        </form>
+    </div>
+
+    {# ── Результати пошуку ── #}
+    <div class="card search-results-card">
+
+        {% if query|length >= 4 %}
+            <h3>
+                Результати для «{{ query }}»
+                <span class="results-count">{{ results|length }} правил</span>
+            </h3>
+
+            {% if results %}
+                <div class="rules-list">
+                    {% for r in results %}
+                    <div class="rule-item {% if r.id|string == open_rule_id|string %}selected-rule{% endif %}">
+                        <div class="rule-info">
+                            {# Breadcrumb: сервіс → клас #}
+                            <span class="rule-breadcrumb">{{ r.name_servise }} / {{ r.name_clas }}</span>
+                            <span class="rule-code">{{ r.rule_code }}</span>
+                            <p class="rule-text">{{ r.rule_text }}</p>
+                        </div>
+                        <a href="{{ url_for('search', q=query, open_rule=r.id) }}#details"
+                           class="btn-action">
+                            Переглянути текст
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+                <div class="empty-state">
+                    Правил з кодом «{{ query }}» не знайдено
+                </div>
+            {% endif %}
+
+        {% else %}
+            {# Початковий стан — пошук ще не виконувався ── #}
+            <div class="empty-state">
+                Введіть код у поле вище та натисніть «Знайти»
+            </div>
+        {% endif %}
+
+        {# ── Деталі обраного правила (той самий partial що на головній) ── #}
+        {% if version %}
+            {# close_url — повернутись до результатів без open_rule #}
+            {% set close_url = url_for('search', q=query) %}
+            {% include '_rule_details.html' %}
+        {% endif %}
+
+    </div>{# /.search-results-card #}
+
+</div>{# /.container #}
+
+</body>
+</html>
