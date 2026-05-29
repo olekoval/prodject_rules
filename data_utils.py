@@ -154,12 +154,19 @@ def search_rules_by_code(query: str) -> list[dict]:
     if not query or len(query) < 4:
         return []
 
+    # Нормалізуємо запит користувача:
+    # 1. Знімаємо пробіли на початку і в кінці
+    # 2. Знімаємо пробіли навколо дефісу (напр. "10331 - 7" → "10331-7")
+    query = re.sub(r'\s*-\s*', '-', query).strip()
     query_lower = query.lower()
 
     # Збираємо rule_id правил де знайдено збіг
     matched_rule_ids = set()
     for _, row in df_versions.iterrows():
         text = str(row.get("version_text", ""))
+        # Нормалізуємо текст з бази так само — прибираємо пробіли навколо дефісів
+        # щоб некоректний ввід у Excel не заважав пошуку
+        text = re.sub(r'\s*-\s*', '-', text)
         tokens = CODE_PATTERN.findall(text)
         # Точний збіг без урахування регістру
         if any(t.lower() == query_lower for t in tokens):
