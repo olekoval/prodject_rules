@@ -56,12 +56,20 @@ CODE_PATTERN = re.compile(r"\b(?=.*\d)[A-Za-z0-9-]{4,}\b")
 # ────────────────────────────────────────────────────────────────────────────
 
 def get_classes(service_cod: str) -> list[dict]:
-    """Повертає список класів для вибраного сервісу."""
+    """Повертає список унікальних класів для вказаного сервісу.
+
+    Args:
+        service_cod: Код сервісу з колонки `rule_service`.
+
+    Returns:
+        Список словників із даними класів (ключі 'cod' та 'name'). 
+        Якщо `service_cod` не існує в базі, повертає порожній список `[]`.
+    """
     return (
         dff[dff["rule_service"] == service_cod][["rule_clas", "name_clas"]]
         .drop_duplicates()
         .rename(columns={"rule_clas": "cod", "name_clas": "name"})
-        .to_dict("records")
+        .to_dict("records") # якщо dff буде поржній поверне порожній список []
     )
 
 
